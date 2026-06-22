@@ -742,3 +742,14 @@ body.dark.high-contrast[data-accent] { --primary: #8fb3ff; --primary-dark: #bed2
   border-color: color-mix(in srgb, var(--expense) 40%, var(--line));
   background: var(--expense-soft);
 }
+
+.sidebar { gap: 24px; }
+.sidebar-header { display: grid; gap: 20px; }
+.sidebar-profile-card-top { grid-template-columns: 46px minmax(0, 1fr) auto; min-height: 72px; margin: 0; padding: 12px; border-radius: 17px; background: var(--surface-soft); box-shadow: 0 8px 22px rgba(20, 35, 62, .05); }
+.sidebar-profile-card-top .avatar-small { width: 46px; height: 46px; font-size: 16px; }
+.sidebar-profile-card-top .sidebar-profile-copy strong { font-size: 14px; }
+.sidebar-profile-card-top .sidebar-profile-copy small { margin-top: 3px; font-size: 11px; }
+.sidebar-profile-card-top .sidebar-profile-arrow { padding-left: 4px; font-size: 24px; }
+.sidebar-profile-card-top:focus-visible { outline-offset: 3px; }
+.brand-sidebar { padding: 0 8px; }
+@media (max-width: 780px) { .sidebar-header { gap: 16px; } .sidebar-profile-card-top { min-height: 68px; } }

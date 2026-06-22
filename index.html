@@ -102,11 +102,19 @@
 
   <div class="app-shell" id="appShell" hidden>
     <aside class="sidebar" id="sidebar" aria-label="Menu lateral">
-      <div class="brand">
-        <div class="brand-mark" aria-hidden="true">M</div>
-        <div>
-          <strong>Meu Fluxo</strong>
-          <span>Gestão financeira</span>
+      <div class="sidebar-header">
+        <button class="sidebar-profile-card sidebar-profile-card-top" type="button" data-view-link="perfil" aria-label="Abrir perfil e personalização">
+          <span class="avatar avatar-small" id="sidebarAvatar" aria-hidden="true">M</span>
+          <span class="sidebar-profile-copy"><strong id="sidebarProfileName">Seu perfil</strong><small id="sidebarProfileHint">Personalizar</small></span>
+          <span class="sidebar-profile-arrow" aria-hidden="true">›</span>
+        </button>
+
+        <div class="brand brand-sidebar" aria-label="Meu Fluxo, gestão financeira">
+          <div class="brand-mark" aria-hidden="true">M</div>
+          <div>
+            <strong>Meu Fluxo</strong>
+            <span>Gestão financeira</span>
+          </div>
         </div>
       </div>
 
@@ -119,11 +127,6 @@
       </nav>
 
       <div class="sidebar-bottom">
-        <button class="sidebar-profile-card" type="button" data-view="perfil" aria-label="Abrir perfil e personalização">
-          <span class="avatar avatar-small" id="sidebarAvatar" aria-hidden="true">M</span>
-          <span class="sidebar-profile-copy"><strong id="sidebarProfileName">Seu perfil</strong><small id="sidebarProfileHint">Personalizar</small></span>
-          <span class="sidebar-profile-arrow" aria-hidden="true">›</span>
-        </button>
         <button class="nav-item" id="accessibilityBtn" aria-haspopup="dialog"><span aria-hidden="true">Aa</span>Acessibilidade</button>
         <button class="nav-item" id="backupBtn"><span aria-hidden="true">⇩</span>Backup dos dados</button>
         <button class="nav-item" id="themeBtn"><span aria-hidden="true">◐</span>Alternar tema</button>
