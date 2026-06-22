@@ -27,9 +27,15 @@
         <button class="nav-item" data-view="lancamentos"><span aria-hidden="true">↕</span>Lançamentos</button>
         <button class="nav-item" data-view="orcamentos"><span aria-hidden="true">◎</span>Orçamentos</button>
         <button class="nav-item" data-view="relatorios"><span aria-hidden="true">▥</span>Relatórios</button>
+        <button class="nav-item" data-view="perfil"><span aria-hidden="true">◉</span>Perfil</button>
       </nav>
 
       <div class="sidebar-bottom">
+        <button class="sidebar-profile-card" type="button" data-view="perfil" aria-label="Abrir perfil e personalização">
+          <span class="avatar avatar-small" id="sidebarAvatar" aria-hidden="true">M</span>
+          <span class="sidebar-profile-copy"><strong id="sidebarProfileName">Seu perfil</strong><small id="sidebarProfileHint">Personalizar</small></span>
+          <span class="sidebar-profile-arrow" aria-hidden="true">›</span>
+        </button>
         <button class="nav-item" id="accessibilityBtn" aria-haspopup="dialog"><span aria-hidden="true">Aa</span>Acessibilidade</button>
         <button class="nav-item" id="backupBtn"><span aria-hidden="true">⇩</span>Backup dos dados</button>
         <button class="nav-item" id="themeBtn"><span aria-hidden="true">◐</span>Alternar tema</button>
@@ -45,6 +51,9 @@
           <h1 id="viewTitle">Visão geral</h1>
         </div>
         <div class="topbar-actions">
+          <button class="top-profile-button" type="button" data-view-link="perfil" aria-label="Abrir perfil e personalização" title="Perfil">
+            <span class="avatar avatar-top" id="topbarAvatar" aria-hidden="true">M</span>
+          </button>
           <label class="month-picker" for="monthFilter" title="Mês de referência">
             <span aria-hidden="true">◷</span>
             <span class="sr-only">Mês de referência</span>
@@ -55,13 +64,23 @@
       </header>
 
       <section class="view active" id="dashboardView" aria-labelledby="dashboardHeading">
-        <div class="welcome-row">
-          <div>
-            <h2 id="dashboardHeading">Seu mês em um olhar</h2>
+        <section class="home-hero" aria-labelledby="dashboardHeading">
+          <div class="hero-copy">
+            <p class="eyebrow">Seu painel financeiro pessoal</p>
+            <h2 id="dashboardHeading"><span id="dashboardGreetingTitle">Seu mês em um olhar</span></h2>
             <p id="monthLabel">Organize suas entradas, contas e parcelas.</p>
+            <div class="hero-actions">
+              <button class="hero-action" type="button" data-view-link="lancamentos"><span aria-hidden="true">↕</span> Ver lançamentos</button>
+              <button class="hero-action ghost" type="button" data-view-link="perfil"><span aria-hidden="true">✦</span> Personalizar painel</button>
+            </div>
           </div>
-          <div class="balance-tag" id="balanceTag">Saldo disponível</div>
-        </div>
+          <button class="hero-profile" type="button" data-view-link="perfil" aria-label="Abrir perfil e personalização">
+            <span class="avatar avatar-hero" id="homeAvatar" aria-hidden="true">M</span>
+            <span class="hero-profile-copy"><strong id="homeProfileName">Seu espaço financeiro</strong><small id="homeProfileHint">Adicione foto, nome e cores</small></span>
+            <span class="hero-profile-arrow" aria-hidden="true">›</span>
+          </button>
+          <div class="hero-decoration" aria-hidden="true"></div>
+        </section>
 
         <div class="stat-grid" aria-label="Resumo financeiro do mês">
           <article class="stat-card income-card">
@@ -81,6 +100,12 @@
             <p>Saldo do mês</p>
             <strong id="balanceTotal">R$ 0,00</strong>
             <small id="balanceNote">Receitas − despesas</small>
+          </article>
+          <article class="stat-card commitments-card">
+            <div class="stat-icon" aria-hidden="true">◷</div>
+            <p>Próximos compromissos</p>
+            <strong id="futureTotal">R$ 0,00</strong>
+            <small id="futureCount">Nenhuma despesa futura</small>
           </article>
         </div>
 
@@ -103,7 +128,7 @@
                 <h3 id="budgetTitle">Orçamento do mês</h3>
                 <p>Quanto já foi comprometido</p>
               </div>
-              <button class="text-button" type="button" data-view-link="orcamentos">Gerenciar orçamento</button>
+              <button class="text-button" type="button" data-view-link="orcamentos">Gerenciar</button>
             </div>
             <div class="budget-meter">
               <div class="meter-track" id="budgetMeter" role="progressbar" aria-label="Orçamento mensal utilizado" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="Orçamento ainda não definido"><span id="budgetMeterFill"></span></div>
@@ -113,16 +138,29 @@
           </article>
         </div>
 
-        <section class="panel recent-panel" aria-labelledby="recentTitle">
-          <div class="panel-header">
-            <div>
-              <h3 id="recentTitle">Lançamentos recentes</h3>
-              <p>Os últimos movimentos do mês selecionado</p>
+        <div class="dashboard-lower-grid">
+          <section class="panel recent-panel" aria-labelledby="recentTitle">
+            <div class="panel-header">
+              <div>
+                <h3 id="recentTitle">Lançamentos recentes</h3>
+                <p>Os últimos movimentos do mês selecionado</p>
+              </div>
+              <button class="text-button" type="button" data-view-link="lancamentos">Ver todos</button>
             </div>
-            <button class="text-button" type="button" data-view-link="lancamentos">Ver todos os lançamentos</button>
-          </div>
-          <div class="recent-list" id="recentList"></div>
-        </section>
+            <div class="recent-list" id="recentList"></div>
+          </section>
+
+          <section class="panel upcoming-panel" aria-labelledby="upcomingTitle">
+            <div class="panel-header">
+              <div>
+                <h3 id="upcomingTitle">Próximos vencimentos</h3>
+                <p>Compromissos já registrados</p>
+              </div>
+              <button class="text-button" type="button" data-view-link="relatorios">Ver parcelas</button>
+            </div>
+            <div class="upcoming-list" id="upcomingList"></div>
+          </section>
+        </div>
       </section>
 
       <section class="view" id="lancamentosView" aria-labelledby="entriesHeading">
@@ -173,6 +211,87 @@
             <button class="secondary-button" type="submit">Adicionar limite</button>
           </form>
           <div class="category-budget-list" id="categoryBudgetList"></div>
+        </div>
+      </section>
+
+
+      <section class="view" id="perfilView" aria-labelledby="profileHeading">
+        <div class="profile-page-head">
+          <div>
+            <p class="eyebrow">Seu espaço no Meu Fluxo</p>
+            <h2 id="profileHeading">Perfil e personalização</h2>
+            <p>Use seu nome, uma foto e uma cor de destaque para deixar o painel com a sua cara.</p>
+          </div>
+        </div>
+
+        <div class="profile-layout">
+          <aside class="panel profile-preview-card" aria-labelledby="profilePreviewTitle">
+            <div class="profile-preview-top">
+              <span class="profile-label">Prévia do seu perfil</span>
+              <span class="preview-status">Salvo neste navegador</span>
+            </div>
+            <div class="profile-identity">
+              <span class="avatar avatar-profile" id="profilePreviewAvatar" aria-hidden="true">M</span>
+              <div>
+                <h3 id="profilePreviewTitle"><span id="profilePreviewName">Seu perfil</span></h3>
+                <p id="profilePreviewGreeting">Personalize seu espaço para tornar a organização mais sua.</p>
+              </div>
+            </div>
+            <div class="profile-preview-stats" aria-label="Resumo do perfil">
+              <div><span>Lançamentos</span><strong id="profileEntriesCount">0</strong></div>
+              <div><span>Orçamento mensal</span><strong id="profileBudgetValue">Não definido</strong></div>
+            </div>
+            <div class="profile-tip"><span aria-hidden="true">✦</span><p>Sua foto e as preferências ficam armazenadas apenas neste navegador e também entram no backup JSON.</p></div>
+          </aside>
+
+          <form class="panel profile-form" id="profileForm">
+            <div class="panel-header">
+              <div>
+                <h3>Dados do perfil</h3>
+                <p>Escolha como você quer ser identificado no painel e nos relatórios.</p>
+              </div>
+            </div>
+
+            <div class="profile-photo-row">
+              <span class="avatar avatar-editor" id="profileEditorAvatar" aria-hidden="true">M</span>
+              <div class="profile-photo-copy">
+                <strong>Foto de perfil</strong>
+                <span>Envie uma foto JPG, PNG ou WebP. Ela será reduzida automaticamente para ocupar pouco espaço.</span>
+                <div class="profile-photo-actions">
+                  <label class="secondary-button file-input-label" for="profilePhotoInput">Escolher foto<input id="profilePhotoInput" type="file" accept="image/png,image/jpeg,image/webp" hidden /></label>
+                  <button class="text-button remove-photo-button" type="button" id="removeProfilePhotoBtn">Remover foto</button>
+                </div>
+              </div>
+            </div>
+            <p class="sr-only" id="profilePhotoStatus" aria-live="polite"></p>
+
+            <div class="profile-form-grid">
+              <label for="profileNameInput"><span>Seu nome</span><input id="profileNameInput" maxlength="40" autocomplete="name" placeholder="Ex.: Alan" /><small>Será exibido na tela inicial e no cabeçalho do relatório.</small></label>
+              <label class="profile-greeting-field" for="profileGreetingInput"><span>Mensagem de boas-vindas <em>(opcional)</em></span><textarea id="profileGreetingInput" rows="3" maxlength="120" placeholder="Ex.: Um passo de cada vez para organizar melhor meu dinheiro."></textarea><small>Essa frase aparece no seu painel inicial.</small></label>
+            </div>
+
+            <fieldset class="accent-fieldset">
+              <legend>Cor de destaque</legend>
+              <p>Escolha a cor principal dos botões, gráficos e detalhes do seu painel.</p>
+              <div class="accent-options" role="radiogroup" aria-label="Cor de destaque">
+                <input class="sr-only" type="radio" name="accentColor" id="accentViolet" value="violet" checked />
+                <label class="accent-option accent-violet" for="accentViolet"><i aria-hidden="true"></i><span>Violeta</span></label>
+                <input class="sr-only" type="radio" name="accentColor" id="accentOcean" value="ocean" />
+                <label class="accent-option accent-ocean" for="accentOcean"><i aria-hidden="true"></i><span>Oceano</span></label>
+                <input class="sr-only" type="radio" name="accentColor" id="accentEmerald" value="emerald" />
+                <label class="accent-option accent-emerald" for="accentEmerald"><i aria-hidden="true"></i><span>Esmeralda</span></label>
+                <input class="sr-only" type="radio" name="accentColor" id="accentCoral" value="coral" />
+                <label class="accent-option accent-coral" for="accentCoral"><i aria-hidden="true"></i><span>Coral</span></label>
+                <input class="sr-only" type="radio" name="accentColor" id="accentSunset" value="sunset" />
+                <label class="accent-option accent-sunset" for="accentSunset"><i aria-hidden="true"></i><span>Dourado</span></label>
+              </div>
+            </fieldset>
+
+            <div class="profile-form-actions">
+              <button class="secondary-button" type="button" id="resetProfileStyleBtn">Restaurar estilo</button>
+              <button class="primary-button" type="submit">Salvar perfil</button>
+            </div>
+          </form>
         </div>
       </section>
 
@@ -312,6 +431,6 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
   <p class="sr-only" id="appAnnouncement" aria-live="polite" aria-atomic="true"></p>
-  <script src="app.js"></script>
+  <script type="module" src="src/main.js"></script>
 </body>
 </html>

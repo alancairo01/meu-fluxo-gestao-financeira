@@ -1,8 +1,3 @@
-/**
- * Servidor local sem dependências para rodar o Meu Fluxo.
- * Execute: npm run dev
- * Depois acesse: http://localhost:3000
- */
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
@@ -25,32 +20,45 @@ const MIME_TYPES = {
   '.txt': 'text/plain; charset=utf-8'
 };
 
-function send(res, status, body, headers = {}) {
-  res.writeHead(status, { 'Cache-Control': 'no-store', ...headers });
-  res.end(body);
+function sendResponse(response, statusCode, body, headers = {}) {
+  response.writeHead(statusCode, { 'Cache-Control': 'no-store', ...headers });
+  response.end(body);
 }
 
-const server = http.createServer((req, res) => {
-  try {
-    const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
-    const requestedPath = decodeURIComponent(url.pathname === '/' ? '/index.html' : url.pathname);
-    const filePath = path.resolve(ROOT, `.${requestedPath}`);
+function resolveRequestPath(requestUrl, host) {
+  const url = new URL(requestUrl, `http://${host || 'localhost'}`);
+  const requestedPath = decodeURIComponent(url.pathname === '/' ? '/index.html' : url.pathname);
+  return path.resolve(ROOT, `.${requestedPath}`);
+}
 
-    if (!filePath.startsWith(ROOT + path.sep) && filePath !== ROOT) {
-      return send(res, 403, 'Acesso negado.');
+function isInsideApplicationRoot(filePath) {
+  return filePath.startsWith(ROOT + path.sep) || filePath === ROOT;
+}
+
+function serveStaticFile(filePath, response) {
+  fs.stat(filePath, (error, stats) => {
+    if (error || !stats.isFile()) {
+      sendResponse(response, 404, 'Arquivo não encontrado.');
+      return;
     }
 
-    fs.stat(filePath, (statError, stats) => {
-      if (statError || !stats.isFile()) {
-        return send(res, 404, 'Arquivo não encontrado.');
-      }
+    const extension = path.extname(filePath).toLowerCase();
+    const contentType = MIME_TYPES[extension] || 'application/octet-stream';
+    response.writeHead(200, { 'Content-Type': contentType, 'Cache-Control': 'no-store' });
+    fs.createReadStream(filePath).pipe(response);
+  });
+}
 
-      const contentType = MIME_TYPES[path.extname(filePath).toLowerCase()] || 'application/octet-stream';
-      res.writeHead(200, { 'Content-Type': contentType, 'Cache-Control': 'no-store' });
-      fs.createReadStream(filePath).pipe(res);
-    });
-  } catch (error) {
-    send(res, 500, 'Erro interno ao iniciar a aplicação.');
+const server = http.createServer((request, response) => {
+  try {
+    const filePath = resolveRequestPath(request.url, request.headers.host);
+    if (!isInsideApplicationRoot(filePath)) {
+      sendResponse(response, 403, 'Acesso negado.');
+      return;
+    }
+    serveStaticFile(filePath, response);
+  } catch {
+    sendResponse(response, 500, 'Erro interno ao iniciar a aplicação.');
   }
 });
 

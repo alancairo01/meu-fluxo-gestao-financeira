@@ -1,21 +1,13 @@
-ATUALIZAÇÃO — BACKUP APARECENDO NA VISÃO GERAL
+ATUALIZAÇÃO DE ESTRUTURA DE CÓDIGO
 
-CORREÇÃO REALIZADA
-Ao restaurar um Backup JSON, o sistema agora identifica automaticamente um mês que possua lançamentos e muda o seletor superior para esse período antes de atualizar a tela.
+Esta versão reorganiza o Meu Fluxo em módulos para facilitar manutenção.
 
-Exemplo
-Se o backup tiver contas e parcelas com vencimento em 05/07/2026 e o sistema estiver mostrando junho, a aplicação passa automaticamente para julho. Assim, os registros aparecem na Visão geral e em Lançamentos.
+Para atualizar sem perder seus dados:
+1. Feche o terminal que está executando o sistema.
+2. Extraia todo o conteúdo deste arquivo dentro da pasta do Meu Fluxo.
+3. Confirme a substituição dos arquivos existentes.
+4. Execute: npm start
+5. Atualize o navegador com Ctrl + F5.
 
-IMPORTANTE
-- Backup JSON cria uma cópia do arquivo.
-- Restaurar backup é a opção que carrega essa cópia no sistema.
-- O filtro de mês continua funcionando: ao selecionar manualmente um mês sem lançamentos, os cards e a lista ficarão vazios porque não há registros naquele período.
-
-COMO ATUALIZAR
-1. Feche o Meu Fluxo.
-2. Extraia os arquivos deste ZIP diretamente dentro da pasta atual do sistema.
-3. Confirme a substituição de app.js, index.html, style.css e README.md.
-4. Abra novamente pelo Abrir Meu Fluxo.bat ou execute npm start.
-5. No navegador, pressione Ctrl + F5.
-
-Seus lançamentos, orçamentos e preferências continuam preservados.
+IMPORTANTE: não altere a pasta src/. Ela contém os módulos da aplicação.
+Se você quiser editar o sistema, comece por README.md e docs/ARQUITETURA.md.

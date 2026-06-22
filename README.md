@@ -1,72 +1,42 @@
-# Meu Fluxo — Gestão Financeira
+# Meu Fluxo — Código estruturado
 
-Aplicação local para organizar receitas, despesas, categorias, contas recorrentes e compras parceladas.
+Aplicação local de gestão financeira pessoal. Esta versão mantém os dados já salvos no navegador e reorganiza o código para facilitar correções, evolução e manutenção.
 
-## Rodar sem instalar nada
-
-Dê dois cliques em `Abrir Meu Fluxo.bat` ou abra `index.html` no navegador.
-
-## Rodar pelo terminal (Node.js)
-
-No PowerShell, dentro desta pasta:
+## Como executar
 
 ```powershell
-npm install
 npm start
 ```
 
-Depois, abra: `http://localhost:3000`
+Abra `http://localhost:3000` no navegador. Também é possível usar o arquivo **Abrir Meu Fluxo.bat**.
 
-> Esta aplicação não depende de banco de dados ou internet. Os dados ficam salvos no navegador do seu computador. Use **Backup** dentro do sistema periodicamente para guardar seus lançamentos.
+## Organização do código
 
-## Recursos principais
+```text
+src/
+├── config/       Constantes e configurações da aplicação
+├── core/         Acesso ao DOM e armazenamento do estado
+├── domain/       Regras de negócio de lançamentos, orçamento e estado
+├── services/     Backup, CSV, foto de perfil e relatório PDF
+├── ui/           Formulários, preferências, perfil e renderizadores
+├── utils/        Datas, valores, categorias e identificadores
+├── app.js        Orquestra os fluxos e eventos da aplicação
+└── main.js       Ponto de entrada da interface
+```
 
-- Receitas e despesas por categoria;
-- Cartão, mercado, energia, moradia, transporte e outras categorias;
-- Compras parceladas com total de parcelas e parcela atual (ex.: 3 de 12);
-- Geração automática das próximas parcelas;
-- Contas recorrentes mensais;
-- Resumo mensal, orçamento por categoria e relatórios;
-- Exportação CSV e backup JSON.
+## Regras adotadas
 
-## Acessibilidade
+- Responsabilidades separadas por módulo.
+- Estado centralizado no `StateStore`.
+- Regras financeiras fora da camada visual.
+- Renderização dividida por tela: Home, Lançamentos, Orçamentos e Relatórios.
+- Backup e restauração continuam compatíveis com os dados existentes.
+- Sem dependências externas de JavaScript.
+- Comentários de código, quando necessários, seguem o formato `//` e descrevem somente a função ou método.
 
-O menu **Acessibilidade** permite ajustar a experiência conforme a necessidade:
+## Atualização sem perder os dados
 
-- Texto normal, maior ou extra grande;
-- Alto contraste;
-- Redução de animações e transições;
-- Navegação completa pelo teclado, com foco visível em botões e campos;
-- Atalho “Pular para o conteúdo principal” ao pressionar `Tab` no início da página;
-- Campos obrigatórios identificados, mensagens de erro e avisos anunciados para leitores de tela;
-- Rótulos claros para filtros, tabela, gráficos, botões de editar e excluir;
-- Gráfico e barras de orçamento com descrição textual, não dependendo apenas de cores.
-
-### Teclado
-
-- `Tab`: avança entre os campos e botões;
-- `Shift + Tab`: volta;
-- `Enter` ou `Espaço`: ativa botões e opções;
-- `Esc`: fecha janelas de lançamento e acessibilidade.
-
-
-## Simplificação do novo lançamento
-
-O formulário de novo lançamento foi simplificado: foram removidos os campos **Forma de pagamento**, **Cartão ou conta** e **Status**. A categoria **Cartão** continua disponível para classificar compras feitas no cartão.
-
-## Atualização: data padrão e relatório em PDF
-
-- Ao abrir **Novo lançamento**, a data é preenchida automaticamente para o **dia 05 do próximo mês**. A data pode ser alterada quando necessário.
-- Após salvar, o mês de referência muda automaticamente para o mês do lançamento, garantindo que ele apareça imediatamente na Visão geral.
-- Em **Relatórios**, o botão **Gerar relatório PDF** abre uma versão profissional do resumo mensal. Na tela de impressão do navegador, escolha **Salvar como PDF**.
-
-## Limpar todos os dados
-
-Na aba **Relatórios**, em **Gerenciamento de dados**, há a opção **Limpar todos os dados**. Ela remove lançamentos, parcelas futuras e orçamentos salvos neste navegador. As preferências de tema e acessibilidade são mantidas. Antes de confirmar, o sistema recomenda gerar um **Backup JSON**.
-
-
-## Correção: restauração de backup
-
-- **Backup JSON** apenas cria e baixa uma cópia dos dados; para carregar essa cópia, use **Relatórios → Restaurar backup**.
-- Depois da restauração, o Meu Fluxo passa automaticamente para um mês que tenha lançamentos no arquivo restaurado. Por exemplo: despesas cadastradas para **05 de julho** passam a aparecer imediatamente em **julho**, na **Visão geral** e em **Lançamentos**.
-- O mês escolhido fica salvo no navegador. Você continua podendo mudar o mês manualmente no seletor superior.
+1. Feche o servidor atual com `Ctrl + C`.
+2. Extraia esta versão em uma nova pasta ou substitua os arquivos do projeto atual.
+3. Mantenha o mesmo navegador: os lançamentos permanecem no `localStorage` com a chave `meuFluxo.finance.v1`.
+4. Execute `npm start` e atualize a página com `Ctrl + F5`.
