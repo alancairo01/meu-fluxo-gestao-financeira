@@ -24,6 +24,7 @@ function buildReportHtml(state, month, owner) {
   const budgetHtml = createBudgetHtml(monthlyBudget, summary.expense, remainingBudget);
   const profile = normalizeProfile(state.profile, owner);
   const title = `Relatório Financeiro - ${formatFullMonth(month)}${profile.name ? ` - ${profile.name}` : ''}`;
+  const downloadFileName = createPdfFilename(month, profile.name);
 
   return `<!doctype html>
 <html lang="pt-BR">
@@ -34,7 +35,12 @@ function buildReportHtml(state, month, owner) {
   <style>${getReportStyles()}</style>
 </head>
 <body>
-  <main class="page">
+  <div class="report-actions" role="toolbar" aria-label="Ações do relatório">
+    <button class="download-pdf-button" id="downloadPdfBtn" type="button">Baixar PDF</button>
+    <button class="print-pdf-button" id="printPdfBtn" type="button">Imprimir / Salvar como PDF</button>
+  </div>
+  <p class="download-status" id="downloadStatus" role="status" aria-live="polite"></p>
+  <main class="page" id="reportContent" data-file-name="${escapeAttribute(downloadFileName)}">
     <header class="header">
       <div>
         <div class="profile-brand">
@@ -76,9 +82,53 @@ function buildReportHtml(state, month, owner) {
     </section>
 
     <footer class="footer"><span>${profile.name ? `Relatório de ${escapeHtml(profile.name)}` : 'Relatório financeiro pessoal'}.</span><span>Emitido pelo sistema em ${escapeHtml(formatGeneratedAt())}.</span></footer>
-    <div class="print-note">Para gerar o arquivo, use a opção <strong>Salvar como PDF</strong> na janela de impressão do navegador.</div>
+    <div class="print-note">Use <strong>Baixar PDF</strong> para salvar o relatório diretamente. Caso prefira, utilize também a opção de impressão do navegador.</div>
   </main>
-  <script>window.addEventListener('load', function () { setTimeout(function () { window.focus(); window.print(); }, 250); });<\/script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"><\/script>
+  <script>
+    (function () {
+      var downloadButton = document.getElementById('downloadPdfBtn');
+      var printButton = document.getElementById('printPdfBtn');
+      var status = document.getElementById('downloadStatus');
+      var report = document.getElementById('reportContent');
+
+      function setStatus(message) {
+        status.textContent = message;
+      }
+
+      downloadButton.addEventListener('click', async function () {
+        if (!window.html2pdf) {
+          setStatus('Não foi possível carregar o gerador de PDF. Use “Imprimir / Salvar como PDF”.');
+          return;
+        }
+
+        downloadButton.disabled = true;
+        setStatus('Preparando o seu PDF…');
+        try {
+          await window.html2pdf()
+            .set({
+              margin: [8, 8, 8, 8],
+              filename: report.dataset.fileName || 'relatorio-financeiro.pdf',
+              image: { type: 'jpeg', quality: 0.98 },
+              html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+              jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+              pagebreak: { mode: ['css', 'legacy'] }
+            })
+            .from(report)
+            .save();
+          setStatus('Download iniciado.');
+        } catch (error) {
+          setStatus('Não foi possível gerar o download. Use “Imprimir / Salvar como PDF”.');
+        } finally {
+          downloadButton.disabled = false;
+        }
+      });
+
+      printButton.addEventListener('click', function () {
+        window.print();
+      });
+    }());
+  <\/script>
 </body>
 </html>`;
 }
@@ -99,6 +149,16 @@ function getInitials(name) {
   if (!names.length) return 'M';
   if (names.length === 1) return names[0].slice(0, 2).toUpperCase();
   return `${names[0][0]}${names.at(-1)[0]}`.toUpperCase();
+}
+
+function createPdfFilename(month, owner) {
+  const safeOwner = String(owner || 'usuario')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '') || 'usuario';
+  return `relatorio-financeiro-${month}-${safeOwner}.pdf`;
 }
 
 function escapeAttribute(value) {
@@ -158,6 +218,11 @@ function getReportStyles() {
     :root { color-scheme: light; }
     * { box-sizing: border-box; }
     body { margin: 0; color: #152033; background: #f3f6fb; font-family: Arial, Helvetica, sans-serif; font-size: 11px; line-height: 1.45; }
+    .report-actions { display: flex; justify-content: flex-end; gap: 8px; width: 100%; max-width: 210mm; margin: 0 auto 10px; }
+    .report-actions button { border: 0; border-radius: 8px; padding: 10px 13px; color: #fff; background: #3157ed; font: 700 11px Arial, Helvetica, sans-serif; cursor: pointer; }
+    .report-actions .print-pdf-button { color: #21314d; background: #e9eefb; }
+    .report-actions button:disabled { cursor: wait; opacity: .65; }
+    .download-status { width: 100%; max-width: 210mm; min-height: 16px; margin: 0 auto 8px; text-align: right; color: #59677f; font-size: 10px; }
     .page { width: 100%; max-width: 210mm; min-height: 265mm; margin: 0 auto; padding: 20px; background: #fff; }
     .header { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; padding-bottom: 18px; border-bottom: 2px solid #213cce; }
     .profile-brand { display: flex; align-items: center; gap: 12px; color: #0d1b3f; }
@@ -201,7 +266,7 @@ function getReportStyles() {
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     .footer { margin-top: 24px; padding-top: 12px; border-top: 1px solid #dce3f2; color: #6f7c90; font-size: 9px; display: flex; justify-content: space-between; gap: 12px; }
     .print-note { margin: 16px 0 0; padding: 11px 13px; border-radius: 9px; color: #31425d; background: #fff8dc; border: 1px solid #eddc8a; font-size: 11px; }
-    @media print { body { background: #fff; } .page { max-width: none; min-height: 0; padding: 0; } .print-note { display: none; } }
+    @media print { body { background: #fff; } .report-actions, .download-status { display: none; } .page { max-width: none; min-height: 0; padding: 0; } .print-note { display: none; } }
     @media (max-width: 650px) { .summary, .grid-2 { grid-template-columns: 1fr; } .header, .health, .budget-note, .footer { display: block; } .header-side, .budget-note span { margin-top: 8px; text-align: left; } }
   `;
 }
