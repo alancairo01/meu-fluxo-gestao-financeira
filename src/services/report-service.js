@@ -22,7 +22,8 @@ function buildReportHtml(state, month, owner) {
   const futureRows = createFutureInstallmentRows(getFutureInstallments(state.entries, month));
   const health = getFinancialHealth(summary.balance);
   const budgetHtml = createBudgetHtml(monthlyBudget, summary.expense, remainingBudget);
-  const title = `Relatório Financeiro - ${formatFullMonth(month)}${owner ? ` - ${owner}` : ''}`;
+  const profile = normalizeProfile(state.profile, owner);
+  const title = `Relatório Financeiro - ${formatFullMonth(month)}${profile.name ? ` - ${profile.name}` : ''}`;
 
   return `<!doctype html>
 <html lang="pt-BR">
@@ -36,8 +37,14 @@ function buildReportHtml(state, month, owner) {
   <main class="page">
     <header class="header">
       <div>
-        <div class="brand"><span class="mark">M</span><span>Meu Fluxo</span></div>
-        <p class="eyebrow" style="margin-top:16px">${owner ? `Relatório de ${escapeHtml(owner)}` : 'Gestão financeira pessoal'}</p>
+        <div class="profile-brand">
+          <div class="profile-avatar ${profile.photo ? 'has-photo' : ''}">${profile.photo ? `<img src="${escapeAttribute(profile.photo)}" alt="${escapeAttribute(profile.photoAlt)}" />` : `<span>${escapeHtml(profile.initials)}</span>`}</div>
+          <div class="profile-brand-copy">
+            <strong>${escapeHtml(profile.name || 'Seu perfil')}</strong>
+            <span>${escapeHtml(profile.subtitle)}</span>
+          </div>
+        </div>
+        <p class="eyebrow" style="margin-top:16px">${profile.name ? `Relatório de ${escapeHtml(profile.name)}` : 'Gestão financeira pessoal'}</p>
         <h1>Relatório financeiro mensal</h1>
       </div>
       <div class="header-side"><strong>${escapeHtml(formatFullMonth(month))}</strong>Gerado em ${escapeHtml(formatGeneratedAt())}</div>
@@ -68,12 +75,38 @@ function buildReportHtml(state, month, owner) {
       <table><thead><tr><th>Data</th><th>Descrição</th><th>Categoria</th><th>Tipo</th><th style="text-align:right">Valor</th></tr></thead><tbody>${createEntryRows(entries)}</tbody></table>
     </section>
 
-    <footer class="footer"><span>Relatório gerado pelo Meu Fluxo.</span><span>Dados armazenados localmente neste navegador.</span></footer>
+    <footer class="footer"><span>${profile.name ? `Relatório de ${escapeHtml(profile.name)}` : 'Relatório financeiro pessoal'}.</span><span>Emitido pelo sistema em ${escapeHtml(formatGeneratedAt())}.</span></footer>
     <div class="print-note">Para gerar o arquivo, use a opção <strong>Salvar como PDF</strong> na janela de impressão do navegador.</div>
   </main>
   <script>window.addEventListener('load', function () { setTimeout(function () { window.focus(); window.print(); }, 250); });<\/script>
 </body>
 </html>`;
+}
+
+function normalizeProfile(profile, owner) {
+  const name = String(owner || profile?.name || '').trim();
+  return {
+    name,
+    subtitle: name ? 'Relatório financeiro pessoal' : 'Gestão financeira pessoal',
+    photo: String(profile?.photo || '').trim(),
+    photoAlt: name ? `Foto de perfil de ${name}` : 'Foto de perfil',
+    initials: getInitials(name)
+  };
+}
+
+function getInitials(name) {
+  const names = String(name || '').trim().split(/\s+/).filter(Boolean);
+  if (!names.length) return 'M';
+  if (names.length === 1) return names[0].slice(0, 2).toUpperCase();
+  return `${names[0][0]}${names.at(-1)[0]}`.toUpperCase();
+}
+
+function escapeAttribute(value) {
+  return String(value || '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('"', '&quot;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;');
 }
 
 function createCategoryRows(groups, totalExpense) {
@@ -127,8 +160,12 @@ function getReportStyles() {
     body { margin: 0; color: #152033; background: #f3f6fb; font-family: Arial, Helvetica, sans-serif; font-size: 11px; line-height: 1.45; }
     .page { width: 100%; max-width: 210mm; min-height: 265mm; margin: 0 auto; padding: 20px; background: #fff; }
     .header { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; padding-bottom: 18px; border-bottom: 2px solid #213cce; }
-    .brand { display: flex; align-items: center; gap: 10px; color: #0d1b3f; font-weight: 800; letter-spacing: -.2px; }
-    .mark { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 9px; color: #fff; background: linear-gradient(135deg, #3157ed, #7538e8); font-size: 16px; }
+    .profile-brand { display: flex; align-items: center; gap: 12px; color: #0d1b3f; }
+    .profile-brand-copy { display: flex; flex-direction: column; gap: 2px; }
+    .profile-brand-copy strong { color: #0d1b3f; font-size: 18px; line-height: 1.1; }
+    .profile-brand-copy span { color: #59677f; font-size: 11px; }
+    .profile-avatar { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 14px; overflow: hidden; color: #fff; background: linear-gradient(135deg, #3157ed, #7538e8); font-size: 18px; font-weight: 800; letter-spacing: -.5px; box-shadow: 0 10px 20px rgba(49, 87, 237, .18); }
+    .profile-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .eyebrow { margin: 0 0 6px; color: #59677f; text-transform: uppercase; font-size: 9px; font-weight: 700; letter-spacing: .8px; }
     h1 { margin: 0; color: #0d1b3f; font-size: 24px; line-height: 1.1; letter-spacing: -.65px; }
     .header-side { text-align: right; color: #59677f; font-size: 10px; }
