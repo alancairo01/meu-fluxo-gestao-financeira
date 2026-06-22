@@ -1,0 +1,17 @@
+ATUALIZAÇÃO — FORMULÁRIO MAIS SIMPLES
+
+Esta atualização remove do formulário de Novo lançamento:
+- Forma de pagamento
+- Cartão ou conta
+- Status
+
+A categoria “Cartão” continua existindo para classificar despesas feitas no cartão.
+
+COMO ATUALIZAR
+1. Feche o Meu Fluxo.
+2. Extraia os arquivos deste ZIP dentro da pasta atual do sistema.
+3. Confirme a substituição de index.html, app.js e README.md.
+4. Abra novamente pelo Abrir Meu Fluxo.bat ou execute npm start.
+5. Atualize o navegador com Ctrl + F5.
+
+Seus lançamentos continuam salvos. Informações antigas de forma de pagamento, cartão/conta e status deixam de ser usadas pela aplicação.

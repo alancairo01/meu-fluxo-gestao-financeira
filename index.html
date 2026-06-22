@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0b1220" />
+  <title>Meu Fluxo — Gestão Financeira</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <a class="skip-link" href="#mainContent">Pular para o conteúdo principal</a>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar" aria-label="Menu lateral">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">M</div>
+        <div>
+          <strong>Meu Fluxo</strong>
+          <span>Gestão financeira</span>
+        </div>
+      </div>
+
+      <nav class="nav-list" aria-label="Navegação principal">
+        <button class="nav-item active" data-view="dashboard" aria-current="page"><span aria-hidden="true">⌂</span>Visão geral</button>
+        <button class="nav-item" data-view="lancamentos"><span aria-hidden="true">↕</span>Lançamentos</button>
+        <button class="nav-item" data-view="orcamentos"><span aria-hidden="true">◎</span>Orçamentos</button>
+        <button class="nav-item" data-view="relatorios"><span aria-hidden="true">▥</span>Relatórios</button>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <button class="nav-item" id="accessibilityBtn" aria-haspopup="dialog"><span aria-hidden="true">Aa</span>Acessibilidade</button>
+        <button class="nav-item" id="backupBtn"><span aria-hidden="true">⇩</span>Backup dos dados</button>
+        <button class="nav-item" id="themeBtn"><span aria-hidden="true">◐</span>Alternar tema</button>
+        <p>Seus dados ficam salvos neste navegador.</p>
+      </div>
+    </aside>
+
+    <main class="main-content" id="mainContent" tabindex="-1">
+      <header class="topbar">
+        <button class="menu-btn" id="menuBtn" aria-label="Abrir menu" aria-controls="sidebar" aria-expanded="false">☰</button>
+        <div>
+          <p class="eyebrow" id="viewEyebrow">Acompanhe seu dinheiro</p>
+          <h1 id="viewTitle">Visão geral</h1>
+        </div>
+        <div class="topbar-actions">
+          <label class="month-picker" for="monthFilter" title="Mês de referência">
+            <span aria-hidden="true">◷</span>
+            <span class="sr-only">Mês de referência</span>
+            <input type="month" id="monthFilter" aria-label="Mês de referência" />
+          </label>
+          <button class="primary-button" id="newEntryBtn" type="button" aria-haspopup="dialog"><span aria-hidden="true">＋</span> Novo lançamento</button>
+        </div>
+      </header>
+
+      <section class="view active" id="dashboardView" aria-labelledby="dashboardHeading">
+        <div class="welcome-row">
+          <div>
+            <h2 id="dashboardHeading">Seu mês em um olhar</h2>
+            <p id="monthLabel">Organize suas entradas, contas e parcelas.</p>
+          </div>
+          <div class="balance-tag" id="balanceTag">Saldo disponível</div>
+        </div>
+
+        <div class="stat-grid" aria-label="Resumo financeiro do mês">
+          <article class="stat-card income-card">
+            <div class="stat-icon" aria-hidden="true">↗</div>
+            <p>Receitas</p>
+            <strong id="incomeTotal">R$ 0,00</strong>
+            <small id="incomeCount">Nenhum lançamento no mês</small>
+          </article>
+          <article class="stat-card expense-card">
+            <div class="stat-icon" aria-hidden="true">↘</div>
+            <p>Despesas</p>
+            <strong id="expenseTotal">R$ 0,00</strong>
+            <small id="expenseCount">Nenhum lançamento no mês</small>
+          </article>
+          <article class="stat-card balance-card">
+            <div class="stat-icon" aria-hidden="true">◉</div>
+            <p>Saldo do mês</p>
+            <strong id="balanceTotal">R$ 0,00</strong>
+            <small id="balanceNote">Receitas − despesas</small>
+          </article>
+        </div>
+
+        <div class="dashboard-grid">
+          <article class="panel cashflow-panel" aria-labelledby="cashflowTitle">
+            <div class="panel-header">
+              <div>
+                <h3 id="cashflowTitle">Fluxo do mês</h3>
+                <p>Entradas e saídas por dia</p>
+              </div>
+              <span class="legend" aria-hidden="true"><i class="legend-dot income-dot"></i>Receitas <i class="legend-dot expense-dot"></i>Despesas</span>
+            </div>
+            <p class="sr-only" id="cashflowSummary">O gráfico será atualizado quando houver lançamentos.</p>
+            <div class="cashflow-chart" id="cashflowChart" role="img" aria-describedby="cashflowSummary"></div>
+          </article>
+
+          <article class="panel budget-panel" aria-labelledby="budgetTitle">
+            <div class="panel-header">
+              <div>
+                <h3 id="budgetTitle">Orçamento do mês</h3>
+                <p>Quanto já foi comprometido</p>
+              </div>
+              <button class="text-button" type="button" data-view-link="orcamentos">Gerenciar orçamento</button>
+            </div>
+            <div class="budget-meter">
+              <div class="meter-track" id="budgetMeter" role="progressbar" aria-label="Orçamento mensal utilizado" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="Orçamento ainda não definido"><span id="budgetMeterFill"></span></div>
+              <div class="meter-info"><strong id="budgetSpent">R$ 0,00</strong><span id="budgetLimit">Defina um orçamento</span></div>
+            </div>
+            <div class="budget-list" id="budgetPreview"></div>
+          </article>
+        </div>
+
+        <section class="panel recent-panel" aria-labelledby="recentTitle">
+          <div class="panel-header">
+            <div>
+              <h3 id="recentTitle">Lançamentos recentes</h3>
+              <p>Os últimos movimentos do mês selecionado</p>
+            </div>
+            <button class="text-button" type="button" data-view-link="lancamentos">Ver todos os lançamentos</button>
+          </div>
+          <div class="recent-list" id="recentList"></div>
+        </section>
+      </section>
+
+      <section class="view" id="lancamentosView" aria-labelledby="entriesHeading">
+        <h2 class="sr-only" id="entriesHeading">Lançamentos</h2>
+        <div class="view-toolbar">
+          <div class="search-box">
+            <span aria-hidden="true">⌕</span>
+            <label class="sr-only" for="searchEntries">Buscar lançamentos</label>
+            <input id="searchEntries" type="search" placeholder="Buscar por descrição ou categoria" />
+          </div>
+          <div class="filter-selects">
+            <label class="sr-only" for="typeFilter">Filtrar por tipo</label>
+            <select id="typeFilter"><option value="all">Todos os tipos</option><option value="income">Receitas</option><option value="expense">Despesas</option></select>
+          </div>
+        </div>
+        <p class="sr-only" id="entriesCount" aria-live="polite"></p>
+        <div class="table-card">
+          <div class="table-wrap">
+            <table>
+              <caption class="sr-only">Lançamentos do mês selecionado</caption>
+              <thead><tr><th scope="col">Data</th><th scope="col">Descrição</th><th scope="col">Categoria</th><th scope="col">Valor</th><th scope="col"><span class="sr-only">Ações</span></th></tr></thead>
+              <tbody id="entriesTable"></tbody>
+            </table>
+          </div>
+          <div class="empty-state hidden" id="entriesEmpty" role="status"><div aria-hidden="true">◌</div><h3>Nenhum lançamento encontrado</h3><p>Adicione sua primeira receita ou despesa para começar.</p></div>
+        </div>
+      </section>
+
+      <section class="view" id="orcamentosView" aria-labelledby="budgetsHeading">
+        <div class="budget-config-card panel">
+          <div>
+            <h2 id="budgetsHeading">Planejamento do mês</h2>
+            <p>Defina limites para enxergar antes quando um gasto está saindo do controle.</p>
+          </div>
+          <form id="monthlyBudgetForm" class="inline-budget-form">
+            <label for="monthlyBudgetInput"><span>Orçamento total</span><input id="monthlyBudgetInput" type="number" inputmode="decimal" min="0" step="0.01" placeholder="Ex.: 3500,00" /></label>
+            <button class="primary-button" type="submit">Salvar orçamento</button>
+          </form>
+        </div>
+
+        <div class="budget-category-form panel">
+          <div class="panel-header"><div><h3>Limites por categoria</h3><p>Use para Mercado, Cartão, Energia e o que mais for importante.</p></div></div>
+          <form id="categoryBudgetForm" class="category-budget-controls">
+            <label class="sr-only" for="budgetCategorySelect">Categoria</label>
+            <select id="budgetCategorySelect"></select>
+            <label class="sr-only" for="budgetCategoryAmount">Limite mensal</label>
+            <input id="budgetCategoryAmount" type="number" inputmode="decimal" min="0" step="0.01" placeholder="Limite mensal (R$)" />
+            <button class="secondary-button" type="submit">Adicionar limite</button>
+          </form>
+          <div class="category-budget-list" id="categoryBudgetList"></div>
+        </div>
+      </section>
+
+      <section class="view" id="relatoriosView" aria-labelledby="reportsHeading">
+        <h2 class="sr-only" id="reportsHeading">Relatórios</h2>
+        <div class="report-grid">
+          <article class="panel report-card" aria-labelledby="categoryReportTitle">
+            <div class="panel-header"><div><h3 id="categoryReportTitle">Gastos por categoria</h3><p>Onde seu dinheiro mais saiu neste mês</p></div></div>
+            <div class="category-bars" id="categoryBars"></div>
+          </article>
+          <article class="panel report-card" aria-labelledby="installmentsReportTitle">
+            <div class="panel-header"><div><h3 id="installmentsReportTitle">Parcelas futuras</h3><p>Compromissos já registrados</p></div></div>
+            <div class="installment-list" id="installmentList"></div>
+          </article>
+        </div>
+        <div class="panel export-panel">
+          <div>
+            <h3>Relatório e exportação</h3>
+            <p>Gere um relatório mensal formatado para salvar em PDF, exporte sua planilha ou mantenha uma cópia de segurança.</p>
+          </div>
+          <div class="export-actions">
+            <button class="primary-button" type="button" id="pdfReportBtn" aria-describedby="pdfReportHint"><span aria-hidden="true">▣</span> Gerar relatório PDF</button>
+            <span class="sr-only" id="pdfReportHint">Abre a visualização pronta para impressão. Na janela seguinte, escolha Salvar como PDF.</span>
+            <button class="secondary-button" type="button" id="csvExportBtn">Exportar CSV</button>
+            <button class="secondary-button" type="button" id="jsonExportBtn">Backup JSON</button>
+            <label class="secondary-button file-input-label" for="importFile">Restaurar backup<input type="file" id="importFile" accept="application/json" hidden /></label>
+          </div>
+        </div>
+
+        <div class="panel data-management-panel" aria-labelledby="dataManagementTitle">
+          <div>
+            <p class="eyebrow">Gerenciamento de dados</p>
+            <h3 id="dataManagementTitle">Limpar tudo</h3>
+            <p>Apaga todos os lançamentos, parcelas futuras e orçamentos salvos neste navegador. Exporte um backup antes, caso queira guardar uma cópia.</p>
+          </div>
+          <button class="danger-button" type="button" id="clearDataBtn" aria-haspopup="dialog"><span aria-hidden="true">⌫</span> Limpar todos os dados</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog class="entry-dialog" id="entryDialog" aria-labelledby="dialogTitle" aria-describedby="entryDialogDescription">
+    <form id="entryForm" method="dialog">
+      <div class="dialog-header">
+        <div><p class="eyebrow">Organize seu dinheiro</p><h2 id="dialogTitle">Novo lançamento</h2></div>
+        <button class="icon-button" type="button" id="closeDialogBtn" aria-label="Fechar janela de lançamento">×</button>
+      </div>
+      <p class="form-intro" id="entryDialogDescription">Campos com <span aria-hidden="true">*</span> são obrigatórios.</p>
+
+      <div class="type-toggle" role="group" aria-label="Tipo de lançamento">
+        <button class="type-choice active" type="button" data-type="expense" aria-pressed="true">Despesa</button>
+        <button class="type-choice" type="button" data-type="income" aria-pressed="false">Receita</button>
+      </div>
+
+      <input type="hidden" id="entryId" />
+      <input type="hidden" id="entryType" value="expense" />
+      <div class="form-grid">
+        <label class="full" for="entryDescription"><span class="field-label">Descrição <b aria-hidden="true">*</b></span><input id="entryDescription" required maxlength="80" autocomplete="off" placeholder="Ex.: Supermercado, salário, conta de luz" aria-describedby="entryDescriptionHelp" /><small id="entryDescriptionHelp">Use um nome fácil de reconhecer depois.</small></label>
+        <label for="entryAmount"><span class="field-label">Valor (R$) <b aria-hidden="true">*</b></span><input id="entryAmount" required type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="0,00" /></label>
+        <label for="entryDate"><span class="field-label" id="dateLabel">Vencimento <b aria-hidden="true">*</b></span><input id="entryDate" required type="date" aria-describedby="entryDateHelp" /><small id="entryDateHelp">Preenchido para o dia 05 do próximo mês. Você pode alterar.</small></label>
+        <label for="entryCategory"><span class="field-label">Categoria <b aria-hidden="true">*</b></span><select id="entryCategory" required></select></label>
+      </div>
+
+      <fieldset class="installment-box" id="installmentBox">
+        <legend>Tipo de despesa</legend>
+        <p class="fieldset-intro">Registre uma compra à vista, recorrente ou parcelada.</p>
+        <div class="transaction-mode" role="radiogroup" aria-label="Como esta despesa será registrada">
+          <label><input type="radio" name="expenseMode" value="oneoff" checked /> À vista</label>
+          <label><input type="radio" name="expenseMode" value="recurring" /> Recorrente</label>
+          <label><input type="radio" name="expenseMode" value="installment" /> Parcelada</label>
+        </div>
+        <div class="installment-fields hidden" id="installmentFields" aria-live="polite">
+          <label for="installmentTotal"><span class="field-label">Total de parcelas</span><select id="installmentTotal"></select></label>
+          <label for="installmentCurrent"><span class="field-label">Parcela atual</span><select id="installmentCurrent"></select></label>
+          <label class="check-label" for="generateRemaining"><input id="generateRemaining" type="checkbox" checked /> Criar automaticamente as parcelas restantes</label>
+          <p class="field-help">Exemplo: ao registrar a parcela 3 de 12, o sistema pode criar da 3/12 até a 12/12 nos próximos meses.</p>
+        </div>
+        <div class="recurring-fields hidden" id="recurringFields" aria-live="polite">
+          <label for="recurringMonths"><span class="field-label">Repetir por</span><select id="recurringMonths"><option value="3">3 meses</option><option value="6">6 meses</option><option value="12" selected>12 meses</option></select></label>
+          <label class="check-label" for="generateRecurring"><input id="generateRecurring" type="checkbox" checked /> Criar próximos lançamentos</label>
+          <p class="field-help">Útil para energia, internet, aluguel ou assinaturas. Você poderá editar cada mês depois.</p>
+        </div>
+      </fieldset>
+
+      <label class="notes-label" for="entryNotes"><span class="field-label">Observação <em>(opcional)</em></span><textarea id="entryNotes" rows="2" maxlength="160" placeholder="Detalhes que ajudem a lembrar esse lançamento"></textarea></label>
+      <p class="form-error hidden" id="entryFormError" role="alert"></p>
+      <div class="dialog-actions"><button class="secondary-button" type="button" id="cancelDialogBtn">Cancelar</button><button class="primary-button" type="submit" id="saveEntryBtn">Salvar lançamento</button></div>
+    </form>
+  </dialog>
+
+  <dialog class="clear-data-dialog" id="clearDataDialog" aria-labelledby="clearDataTitle" aria-describedby="clearDataDescription">
+    <form id="clearDataForm" method="dialog">
+      <div class="dialog-header">
+        <div><p class="eyebrow">Ação irreversível</p><h2 id="clearDataTitle">Limpar todos os dados?</h2></div>
+        <button class="icon-button" type="button" id="closeClearDataDialogBtn" aria-label="Fechar confirmação de limpeza">×</button>
+      </div>
+      <p class="form-intro" id="clearDataDescription">Esta ação remove lançamentos, parcelas futuras e orçamentos. Ela não pode ser desfeita.</p>
+      <div class="clear-data-warning" role="note">
+        <strong>Antes de continuar</strong>
+        <span>Use “Backup JSON” para salvar uma cópia dos seus dados, caso precise recuperá-los depois.</span>
+      </div>
+      <label class="clear-data-confirmation" for="clearDataConfirmation">
+        <input id="clearDataConfirmation" type="checkbox" />
+        <span><strong>Entendo que todos os dados financeiros serão apagados.</strong><small>O botão de confirmação será liberado após esta marcação.</small></span>
+      </label>
+      <div class="dialog-actions"><button class="secondary-button" type="button" id="cancelClearDataBtn">Cancelar</button><button class="danger-button" type="button" id="confirmClearDataBtn" disabled>Apagar tudo</button></div>
+    </form>
+  </dialog>
+
+  <dialog class="accessibility-dialog" id="accessibilityDialog" aria-labelledby="accessibilityTitle" aria-describedby="accessibilityDescription">
+    <form id="accessibilityForm" method="dialog">
+      <div class="dialog-header">
+        <div><p class="eyebrow">Preferências do sistema</p><h2 id="accessibilityTitle">Acessibilidade</h2></div>
+        <button class="icon-button" type="button" id="closeAccessibilityDialogBtn" aria-label="Fechar ajustes de acessibilidade">×</button>
+      </div>
+      <p class="form-intro" id="accessibilityDescription">Escolha como você prefere visualizar o Meu Fluxo. Essas configurações ficam salvas neste navegador.</p>
+
+      <fieldset class="a11y-fieldset">
+        <legend>Tamanho do texto</legend>
+        <div class="font-options">
+          <input class="sr-only" type="radio" name="fontSize" id="fontDefault" value="default" checked />
+          <label for="fontDefault"><strong>Normal</strong><span>Leitura padrão</span></label>
+          <input class="sr-only" type="radio" name="fontSize" id="fontLarge" value="large" />
+          <label for="fontLarge"><strong>Maior</strong><span>Texto 12% maior</span></label>
+          <input class="sr-only" type="radio" name="fontSize" id="fontExtra" value="extra" />
+          <label for="fontExtra"><strong>Extra grande</strong><span>Texto 20% maior</span></label>
+        </div>
+      </fieldset>
+
+      <div class="a11y-switches">
+        <label class="switch-row" for="highContrastInput"><input id="highContrastInput" type="checkbox" role="switch" /><span><strong>Alto contraste</strong><small>Melhora a diferença entre textos, campos e botões.</small></span></label>
+        <label class="switch-row" for="reduceMotionInput"><input id="reduceMotionInput" type="checkbox" role="switch" /><span><strong>Reduzir movimentos</strong><small>Remove animações e transições desnecessárias.</small></span></label>
+      </div>
+      <div class="dialog-actions"><button class="secondary-button" type="button" id="resetAccessibilityBtn">Restaurar padrões</button><button class="primary-button" type="button" id="saveAccessibilityBtn">Concluir</button></div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+  <p class="sr-only" id="appAnnouncement" aria-live="polite" aria-atomic="true"></p>
+  <script src="app.js"></script>
+</body>
+</html>
