@@ -12,7 +12,95 @@
 </head>
 <body>
   <a class="skip-link" href="#mainContent">Pular para o conteúdo principal</a>
-  <div class="app-shell">
+
+  <main class="auth-screen" id="authScreen" aria-labelledby="authTitle">
+    <div class="auth-decoration auth-decoration-one" aria-hidden="true"></div>
+    <div class="auth-decoration auth-decoration-two" aria-hidden="true"></div>
+    <section class="auth-card" aria-live="polite">
+      <div class="auth-brand">
+        <div class="brand-mark" aria-hidden="true">M</div>
+        <div>
+          <strong>Meu Fluxo</strong>
+          <span>Gestão financeira pessoal</span>
+        </div>
+      </div>
+
+      <div class="auth-intro">
+        <p class="eyebrow">Acesse sua conta</p>
+        <h1 id="authTitle">Seu dinheiro, do seu jeito.</h1>
+        <p>Entre para manter seus lançamentos, orçamentos e perfil sincronizados de forma privada na sua conta.</p>
+      </div>
+
+      <div class="auth-tabs" role="tablist" aria-label="Acesso à conta">
+        <button class="auth-tab active" id="loginTabBtn" type="button" role="tab" aria-selected="true">Entrar</button>
+        <button class="auth-tab" id="signUpTabBtn" type="button" role="tab" aria-selected="false">Criar conta</button>
+      </div>
+
+      <p class="auth-feedback hidden" id="authFeedback" role="alert" aria-live="assertive"></p>
+
+      <form class="auth-form" id="loginForm" novalidate>
+        <label for="loginEmail">E-mail
+          <input id="loginEmail" type="email" autocomplete="email" placeholder="voce@exemplo.com" required />
+        </label>
+        <label for="loginPassword">Senha
+          <input id="loginPassword" type="password" autocomplete="current-password" placeholder="Sua senha" minlength="6" required />
+        </label>
+        <button class="text-button auth-link" id="showResetPasswordBtn" type="button">Esqueci minha senha</button>
+        <button class="primary-button auth-submit" id="loginSubmitBtn" type="submit">Entrar na minha conta</button>
+      </form>
+
+      <form class="auth-form hidden" id="signUpForm" novalidate>
+        <label for="signUpEmail">E-mail
+          <input id="signUpEmail" type="email" autocomplete="email" placeholder="voce@exemplo.com" required />
+        </label>
+        <label for="signUpPassword">Crie uma senha
+          <input id="signUpPassword" type="password" autocomplete="new-password" placeholder="Mínimo de 6 caracteres" minlength="6" required />
+        </label>
+        <label for="signUpPasswordConfirm">Confirme a senha
+          <input id="signUpPasswordConfirm" type="password" autocomplete="new-password" placeholder="Repita a senha" minlength="6" required />
+        </label>
+        <button class="primary-button auth-submit" id="signUpSubmitBtn" type="submit">Criar conta</button>
+      </form>
+
+      <form class="auth-form hidden" id="resetPasswordForm" novalidate>
+        <p class="auth-form-copy">Informe seu e-mail. Enviaremos um link seguro para criar uma nova senha.</p>
+        <label for="resetEmail">E-mail
+          <input id="resetEmail" type="email" autocomplete="email" placeholder="voce@exemplo.com" required />
+        </label>
+        <button class="primary-button auth-submit" id="resetSubmitBtn" type="submit">Enviar link de recuperação</button>
+        <button class="text-button auth-back" id="backToLoginBtn" type="button">Voltar para entrar</button>
+      </form>
+
+      <form class="auth-form hidden" id="updatePasswordForm" novalidate>
+        <p class="auth-form-copy">Escolha uma nova senha para continuar usando sua conta.</p>
+        <label for="newPassword">Nova senha
+          <input id="newPassword" type="password" autocomplete="new-password" placeholder="Mínimo de 6 caracteres" minlength="6" required />
+        </label>
+        <label for="newPasswordConfirm">Confirme a nova senha
+          <input id="newPasswordConfirm" type="password" autocomplete="new-password" placeholder="Repita a senha" minlength="6" required />
+        </label>
+        <button class="primary-button auth-submit" id="updatePasswordSubmitBtn" type="submit">Salvar nova senha</button>
+      </form>
+
+      <p class="auth-security-note"><span aria-hidden="true">◈</span>Os dados financeiros ficam vinculados apenas à sua conta. Cada usuário acessa somente as próprias informações.</p>
+    </section>
+  </main>
+
+  <main class="configuration-screen" id="configurationScreen" hidden aria-labelledby="configurationTitle">
+    <section class="configuration-card">
+      <div class="brand-mark" aria-hidden="true">M</div>
+      <p class="eyebrow">Configuração necessária</p>
+      <h1 id="configurationTitle">Não foi possível conectar sua conta.</h1>
+      <p id="configurationMessage">Verifique a configuração do Supabase e tente novamente.</p>
+      <ol class="configuration-steps">
+        <li>Confira as variáveis <strong>SUPABASE_URL</strong> e <strong>SUPABASE_PUBLISHABLE_KEY</strong> no Render.</li>
+        <li>Verifique se o projeto do Supabase está ativo.</li>
+        <li>Atualize a página após salvar as configurações.</li>
+      </ol>
+    </section>
+  </main>
+
+  <div class="app-shell" id="appShell" hidden>
     <aside class="sidebar" id="sidebar" aria-label="Menu lateral">
       <div class="brand">
         <div class="brand-mark" aria-hidden="true">M</div>
@@ -39,7 +127,14 @@
         <button class="nav-item" id="accessibilityBtn" aria-haspopup="dialog"><span aria-hidden="true">Aa</span>Acessibilidade</button>
         <button class="nav-item" id="backupBtn"><span aria-hidden="true">⇩</span>Backup dos dados</button>
         <button class="nav-item" id="themeBtn"><span aria-hidden="true">◐</span>Alternar tema</button>
-        <p>Seus dados ficam salvos neste navegador.</p>
+        <div class="account-panel" aria-label="Status da conta">
+          <div class="account-panel-head">
+            <span class="account-indicator" aria-hidden="true"></span>
+            <strong id="profileSyncLabel">Conectando</strong>
+          </div>
+          <p class="sync-status" id="syncStatus" aria-live="polite">Preparando sua conta…</p>
+          <button class="logout-button" id="logoutBtn" type="button">Sair da conta</button>
+        </div>
       </div>
     </aside>
 
@@ -427,6 +522,20 @@
       </div>
       <div class="dialog-actions"><button class="secondary-button" type="button" id="resetAccessibilityBtn">Restaurar padrões</button><button class="primary-button" type="button" id="saveAccessibilityBtn">Concluir</button></div>
     </form>
+  </dialog>
+
+
+  <dialog class="migration-dialog" id="migrationDialog" aria-labelledby="migrationTitle" aria-describedby="migrationDescription">
+    <section class="migration-content">
+      <p class="eyebrow">Dados encontrados</p>
+      <h2 id="migrationTitle">Importar dados deste dispositivo?</h2>
+      <p class="form-intro" id="migrationDescription">Encontramos dados salvos anteriormente neste navegador. Você pode trazê-los para sua conta agora.</p>
+      <div class="migration-summary" id="migrationSummary" aria-live="polite"></div>
+      <div class="dialog-actions">
+        <button class="secondary-button" id="skipMigrationBtn" type="button">Agora não</button>
+        <button class="primary-button" id="importMigrationBtn" type="button">Importar para minha conta</button>
+      </div>
+    </section>
   </dialog>
 
   <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
