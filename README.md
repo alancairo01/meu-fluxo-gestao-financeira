@@ -63,3 +63,10 @@ O formulário de novo lançamento foi simplificado: foram removidos os campos **
 ## Limpar todos os dados
 
 Na aba **Relatórios**, em **Gerenciamento de dados**, há a opção **Limpar todos os dados**. Ela remove lançamentos, parcelas futuras e orçamentos salvos neste navegador. As preferências de tema e acessibilidade são mantidas. Antes de confirmar, o sistema recomenda gerar um **Backup JSON**.
+
+
+## Correção: restauração de backup
+
+- **Backup JSON** apenas cria e baixa uma cópia dos dados; para carregar essa cópia, use **Relatórios → Restaurar backup**.
+- Depois da restauração, o Meu Fluxo passa automaticamente para um mês que tenha lançamentos no arquivo restaurado. Por exemplo: despesas cadastradas para **05 de julho** passam a aparecer imediatamente em **julho**, na **Visão geral** e em **Lançamentos**.
+- O mês escolhido fica salvo no navegador. Você continua podendo mudar o mês manualmente no seletor superior.

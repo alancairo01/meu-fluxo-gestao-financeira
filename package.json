@@ -1,6 +1,6 @@
 {
   "name": "meu-fluxo-gestao-financeira",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "Aplicação local de gestão financeira pessoal.",
   "scripts": {

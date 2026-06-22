@@ -22,6 +22,7 @@
     return {
       entries: [],
       budgets: { monthly: 0, categories: {} },
+      selectedMonth: '',
       theme: 'light',
       a11y: { fontSize: 'default', highContrast: false, reduceMotion: false }
     };
@@ -45,6 +46,7 @@
         ...stored,
         entries: cleanEntries(stored?.entries),
         budgets: { ...defaults.budgets, ...(stored?.budgets || {}) },
+        selectedMonth: isValidMonth(stored?.selectedMonth) ? stored.selectedMonth : '',
         a11y: { ...defaults.a11y, ...(stored?.a11y || {}) }
       };
     } catch {
@@ -76,12 +78,46 @@
     return toISODateLocal(nextMonth);
   }
 
-  function getCurrentMonth() {
-    return $('monthFilter').value || isoToday().slice(0, 7);
+  function isValidMonth(month) {
+    return /^\d{4}-(0[1-9]|1[0-2])$/.test(String(month || ''));
   }
 
   function monthFromDate(date) {
-    return String(date || '').slice(0, 7);
+    const month = String(date || '').slice(0, 7);
+    return isValidMonth(month) ? month : '';
+  }
+
+  function getCurrentMonth() {
+    return $('monthFilter').value || state.selectedMonth || isoToday().slice(0, 7);
+  }
+
+  function getEntryMonths(entries = state.entries) {
+    return [...new Set((entries || []).map((entry) => monthFromDate(entry?.date)).filter(Boolean))]
+      .sort((a, b) => a.localeCompare(b));
+  }
+
+  function findMonthToDisplay(preferredMonth = '') {
+    const months = getEntryMonths();
+    const currentMonth = isoToday().slice(0, 7);
+    const preferred = isValidMonth(preferredMonth) ? preferredMonth : '';
+
+    // Keep the current choice only when it actually has data. After restoring a
+    // backup, this prevents the app from opening on an empty month while the
+    // restored records are already available in a later (or earlier) month.
+    if (preferred && months.includes(preferred)) return preferred;
+    if (months.includes(currentMonth)) return currentMonth;
+
+    // Prefer the next month with records (common for bills due on the 5th),
+    // otherwise use the most recent month contained in the backup.
+    return months.find((month) => month >= currentMonth) || months.at(-1) || currentMonth;
+  }
+
+  function applyDisplayedMonth(preferredMonth = state.selectedMonth, ensureDataMonth = false) {
+    const preferred = isValidMonth(preferredMonth) ? preferredMonth : '';
+    const month = !ensureDataMonth && preferred ? preferred : findMonthToDisplay(preferred);
+    state.selectedMonth = month;
+    $('monthFilter').value = month;
+    return month;
   }
 
   function money(value) {
@@ -125,7 +161,9 @@
 
   function setSelectedMonthFromDate(date) {
     const month = monthFromDate(date);
-    if (month) $('monthFilter').value = month;
+    if (!month) return;
+    state.selectedMonth = month;
+    $('monthFilter').value = month;
   }
 
   function isInMonth(entry, month = getCurrentMonth()) {
@@ -838,21 +876,33 @@
         const imported = JSON.parse(reader.result);
         if (!Array.isArray(imported.entries)) throw new Error('Arquivo inválido');
         if (!confirm('Restaurar este backup substituirá os dados atuais. Continuar?')) return;
+
         const defaults = defaultState();
         state = {
           ...defaults,
           ...imported,
           entries: cleanEntries(imported.entries),
           budgets: { ...defaults.budgets, ...(imported.budgets || {}) },
+          selectedMonth: '',
           a11y: { ...defaults.a11y, ...(imported.a11y || {}) }
         };
+
+        // Backups may contain entries only for the next months (e.g., bills due
+        // on day 05). Select a month that has restored records before rendering
+        // the dashboard and the entries list.
+        const displayedMonth = applyDisplayedMonth(imported.selectedMonth, true);
         saveState();
         setTheme();
         applyAccessibility();
         renderAll();
-        showToast('Backup restaurado com sucesso.');
+        const total = state.entries.length;
+        showToast(total
+          ? `Backup restaurado: ${total} ${total === 1 ? 'lançamento' : 'lançamentos'}. Exibindo ${fullMonth(displayedMonth)}.`
+          : 'Backup restaurado. Não há lançamentos neste arquivo.');
       } catch {
         showToast('Não foi possível ler esse arquivo de backup.');
+      } finally {
+        $('importFile').value = '';
       }
     };
     reader.readAsText(file);
@@ -875,7 +925,8 @@
     const preferences = { theme: state.theme, a11y: state.a11y };
     localStorage.removeItem(STORAGE_KEY);
     state = { ...defaultState(), ...preferences };
-    $('monthFilter').value = isoToday().slice(0, 7);
+    state.selectedMonth = isoToday().slice(0, 7);
+    $('monthFilter').value = state.selectedMonth;
     $('searchEntries').value = '';
     $('typeFilter').value = 'all';
     setTheme();
@@ -911,7 +962,11 @@
       if (!$('entryFormError').classList.contains('hidden')) clearFormError();
     }));
 
-    $('monthFilter').addEventListener('change', renderAll);
+    $('monthFilter').addEventListener('change', () => {
+      state.selectedMonth = $('monthFilter').value || isoToday().slice(0, 7);
+      saveState();
+      renderAll();
+    });
     $('searchEntries').addEventListener('input', renderEntries);
     $('typeFilter').addEventListener('change', renderEntries);
 
@@ -991,7 +1046,7 @@
   }
 
   function init() {
-    $('monthFilter').value = isoToday().slice(0, 7);
+    applyDisplayedMonth(state.selectedMonth);
     populateCategories('expense');
     initSelects();
     setTheme();

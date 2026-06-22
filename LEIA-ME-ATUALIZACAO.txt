@@ -1,17 +1,21 @@
-ATUALIZAÇÃO — FORMULÁRIO MAIS SIMPLES
+ATUALIZAÇÃO — BACKUP APARECENDO NA VISÃO GERAL
 
-Esta atualização remove do formulário de Novo lançamento:
-- Forma de pagamento
-- Cartão ou conta
-- Status
+CORREÇÃO REALIZADA
+Ao restaurar um Backup JSON, o sistema agora identifica automaticamente um mês que possua lançamentos e muda o seletor superior para esse período antes de atualizar a tela.
 
-A categoria “Cartão” continua existindo para classificar despesas feitas no cartão.
+Exemplo
+Se o backup tiver contas e parcelas com vencimento em 05/07/2026 e o sistema estiver mostrando junho, a aplicação passa automaticamente para julho. Assim, os registros aparecem na Visão geral e em Lançamentos.
+
+IMPORTANTE
+- Backup JSON cria uma cópia do arquivo.
+- Restaurar backup é a opção que carrega essa cópia no sistema.
+- O filtro de mês continua funcionando: ao selecionar manualmente um mês sem lançamentos, os cards e a lista ficarão vazios porque não há registros naquele período.
 
 COMO ATUALIZAR
 1. Feche o Meu Fluxo.
-2. Extraia os arquivos deste ZIP dentro da pasta atual do sistema.
-3. Confirme a substituição de index.html, app.js e README.md.
+2. Extraia os arquivos deste ZIP diretamente dentro da pasta atual do sistema.
+3. Confirme a substituição de app.js, index.html, style.css e README.md.
 4. Abra novamente pelo Abrir Meu Fluxo.bat ou execute npm start.
-5. Atualize o navegador com Ctrl + F5.
+5. No navegador, pressione Ctrl + F5.
 
-Seus lançamentos continuam salvos. Informações antigas de forma de pagamento, cartão/conta e status deixam de ser usadas pela aplicação.
+Seus lançamentos, orçamentos e preferências continuam preservados.
