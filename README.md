@@ -1,42 +1,23 @@
-# Meu Fluxo — Código estruturado
+# Meu Fluxo — Login e sincronização com Supabase
 
-Aplicação local de gestão financeira pessoal. Esta versão mantém os dados já salvos no navegador e reorganiza o código para facilitar correções, evolução e manutenção.
+Aplicação de gestão financeira com login por e-mail e senha, dados separados por usuário e sincronização no Supabase.
 
-## Como executar
+## Executar no computador
 
-```powershell
-npm start
-```
+1. Crie um arquivo `.env` usando `.env.example` como base.
+2. Preencha `SUPABASE_URL` e `SUPABASE_PUBLISHABLE_KEY`.
+3. Execute `npm install` e depois `npm start`.
+4. Acesse `http://localhost:3000`.
 
-Abra `http://localhost:3000` no navegador. Também é possível usar o arquivo **Abrir Meu Fluxo.bat**.
+## Implantar no Render
 
-## Organização do código
+Configure as variáveis de ambiente `SUPABASE_URL` e `SUPABASE_PUBLISHABLE_KEY`.
+Use `npm install` como Build Command, `npm start` como Start Command e `/health` como Health Check Path.
 
-```text
-src/
-├── config/       Constantes e configurações da aplicação
-├── core/         Acesso ao DOM e armazenamento do estado
-├── domain/       Regras de negócio de lançamentos, orçamento e estado
-├── services/     Backup, CSV, foto de perfil e relatório PDF
-├── ui/           Formulários, preferências, perfil e renderizadores
-├── utils/        Datas, valores, categorias e identificadores
-├── app.js        Orquestra os fluxos e eventos da aplicação
-└── main.js       Ponto de entrada da interface
-```
+## Configuração do banco
 
-## Regras adotadas
+Execute o arquivo `supabase/schema.sql` no SQL Editor do Supabase. O guia completo está em `docs/SETUP-SUPABASE-RENDER.md`.
 
-- Responsabilidades separadas por módulo.
-- Estado centralizado no `StateStore`.
-- Regras financeiras fora da camada visual.
-- Renderização dividida por tela: Home, Lançamentos, Orçamentos e Relatórios.
-- Backup e restauração continuam compatíveis com os dados existentes.
-- Sem dependências externas de JavaScript.
-- Comentários de código, quando necessários, seguem o formato `//` e descrevem somente a função ou método.
+## Segurança
 
-## Atualização sem perder os dados
-
-1. Feche o servidor atual com `Ctrl + C`.
-2. Extraia esta versão em uma nova pasta ou substitua os arquivos do projeto atual.
-3. Mantenha o mesmo navegador: os lançamentos permanecem no `localStorage` com a chave `meuFluxo.finance.v1`.
-4. Execute `npm start` e atualize a página com `Ctrl + F5`.
+Use apenas a Publishable Key (`sb_publishable_...`) no projeto. Nunca use uma chave Secret (`sb_secret_...`) ou Service Role no navegador ou no Render para este sistema.

@@ -8,22 +8,23 @@ export function createDefaultState() {
     selectedMonth: '',
     theme: 'light',
     a11y: { fontSize: 'default', highContrast: false, reduceMotion: false },
-    profile: { name: '', greeting: '', photo: '', accent: 'violet' }
+    profile: { name: '', greeting: '', photo: '', avatarPath: '', accent: 'violet' }
   };
 }
 
 export function cleanProfile(profile) {
   const defaults = createDefaultState().profile;
   const source = profile && typeof profile === 'object' ? profile : {};
-  const isValidPhoto = typeof source.photo === 'string'
-    && /^data:image\/(jpeg|png|webp);base64,/i.test(source.photo)
-    && source.photo.length <= 1500000;
+  const photo = typeof source.photo === 'string' ? source.photo.trim() : '';
+  const avatarPath = typeof source.avatarPath === 'string' ? source.avatarPath.trim().slice(0, 240) : '';
+  const isValidPhoto = !photo || /^data:image\/(jpeg|png|webp);base64,/i.test(photo) || /^https:\/\//i.test(photo);
 
   return {
     ...defaults,
     name: String(source.name || '').trim().slice(0, 40),
     greeting: String(source.greeting || '').trim().slice(0, 120),
-    photo: isValidPhoto ? source.photo : '',
+    photo: isValidPhoto ? photo : '',
+    avatarPath,
     accent: PROFILE_ACCENTS.includes(source.accent) ? source.accent : defaults.accent
   };
 }
@@ -33,14 +34,14 @@ function cleanInstallment(installment) {
   const current = Number(installment.current);
   const total = Number(installment.total);
   if (!Number.isInteger(current) || !Number.isInteger(total) || current < 1 || total < current) return null;
-  return { current, total, seriesId: String(installment.seriesId || '') };
+  return { current, total, seriesId: String(installment.seriesId || '').slice(0, 120) };
 }
 
 function cleanRecurring(recurring) {
   if (!recurring || typeof recurring !== 'object') return null;
   const total = Number(recurring.total);
   if (!Number.isInteger(total) || total < 1) return null;
-  return { total, seriesId: String(recurring.seriesId || '') };
+  return { total, seriesId: String(recurring.seriesId || '').slice(0, 120) };
 }
 
 export function cleanEntries(entries) {
@@ -54,7 +55,7 @@ export function cleanEntries(entries) {
     if (!type || !Number.isFinite(amount) || amount <= 0 || !date) return cleaned;
 
     cleaned.push({
-      id: String(source.id || `${Date.now()}-${cleaned.length}`),
+      id: String(source.id || crypto.randomUUID()),
       type,
       description: String(source.description || '').trim().slice(0, 80),
       amount,
@@ -107,11 +108,28 @@ export function normalizeState(source) {
   };
 }
 
+export function hasMeaningfulState(state) {
+  const normalized = normalizeState(state);
+  return Boolean(
+    normalized.entries.length
+    || normalized.budgets.monthly
+    || Object.keys(normalized.budgets.categories).length
+    || normalized.profile.name
+    || normalized.profile.greeting
+    || normalized.profile.photo
+  );
+}
+
 export class StateStore {
   constructor(storage, key) {
     this.storage = storage;
     this.key = key;
     this.state = createDefaultState();
+  }
+
+  setKey(key) {
+    this.key = key;
+    return this.load();
   }
 
   load() {
@@ -121,6 +139,14 @@ export class StateStore {
       this.state = createDefaultState();
     }
     return this.state;
+  }
+
+  read(key) {
+    try {
+      return normalizeState(JSON.parse(this.storage.getItem(key)));
+    } catch {
+      return createDefaultState();
+    }
   }
 
   get() {

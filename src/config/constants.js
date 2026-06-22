@@ -1,4 +1,6 @@
-export const STORAGE_KEY = 'meuFluxo.finance.v1';
+export const LEGACY_STORAGE_KEY = 'meuFluxo.finance.v1';
+export const USER_STORAGE_PREFIX = 'meuFluxo.finance.user.v2';
+export const MIGRATION_KEY_PREFIX = 'meuFluxo.finance.migration.v1';
 
 export const DEFAULT_CATEGORIES = Object.freeze([
   ['Cartão', '💳'],

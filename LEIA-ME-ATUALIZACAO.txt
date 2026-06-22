@@ -1,0 +1,16 @@
+ATUALIZAÇÃO: LOGIN E DADOS POR USUÁRIO
+
+Esta versão substitui o armazenamento principal no navegador por login e banco de dados no Supabase.
+
+PASSOS OBRIGATÓRIOS:
+1. Crie um projeto no Supabase.
+2. Execute o arquivo supabase/schema.sql no SQL Editor.
+3. No Render, adicione SUPABASE_URL e SUPABASE_PUBLISHABLE_KEY.
+4. Faça novo deploy.
+5. Crie sua conta dentro do Meu Fluxo.
+
+GUIA COMPLETO:
+docs/SETUP-SUPABASE-RENDER.md
+
+IMPORTANTE:
+Nunca use chave sb_secret ou Service Role Key no Render ou no código do navegador.
